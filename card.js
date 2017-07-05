@@ -39,8 +39,10 @@ CARD_NAMES[JSON.stringify(Cobra)] = "Cobra";
 var drawCard = function(card) {
 	push();
 	var w = 10;
+	stroke(0); strokeWeight(1);
+	
 	// Name
-	stroke(0); fill(0); textAlign(CENTER,TOP);
+	fill(0); textAlign(CENTER,TOP);
 	text(CARD_NAMES[JSON.stringify(card)],25,0);
 	
 	translate(0,15);

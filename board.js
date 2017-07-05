@@ -2,7 +2,7 @@
 
 var Board = function () {
 	this.cells = [];
-	this.active = true;
+	this.active = false;
 	
 	this.cards = null;
 	this.cards_R = [];
@@ -51,48 +51,24 @@ Board.prototype.get = function(x,y) { if(x >= 0 && x < BOARD_SIZE && y>=0 && y <
 
 
 Board.prototype.draw = function() {
-	push();
-	
-	push();
-		translate(70,0);
-		drawCard(this.cards_B[0]);
-		translate(60,0);
-		drawCard(this.cards_B[1]);
-	pop();
-	
-	translate(0,75);
-
-	push();
-		var w = 50;
-		stroke(0);
 		
-		// Lines
-		for(var i = 0; i <= BOARD_SIZE; i++) {
-			line(i*w,0,i*w,BOARD_SIZE*w);
-			line(0,i*w,BOARD_SIZE*w,i*w);
-		}
-		// Pieces
-		for(var i = 0; i < BOARD_SIZE; i++)
-		for(var j = 0; j < BOARD_SIZE; j++) {
-			switch(this.get(j,i)) {
-				case B_P: fill(0,0,255); ellipse((j+0.5)*w,(i+0.5)*w,w/2,w/2); break;
-				case B_K: fill(0,0,255); ellipse((j+0.5)*w,(i+0.5)*w,w/1.5,w/1.5); break;
-				case R_P: fill(255,0,0); ellipse((j+0.5)*w,(i+0.5)*w,w/2,w/2); break;
-				case R_K: fill(255,0,0); ellipse((j+0.5)*w,(i+0.5)*w,w/1.5,w/1.5); break;
-			}
-		}
-		
-		translate(w*5+10,w*2);
-		drawCard(this.board_card);
-	pop();
-	translate(0,w*5+10);
+	var w = 50;
+	stroke(0); strokeWeight(1);
 	
-	push();
-		translate(70,0);
-		drawCard(this.cards_R[0]);
-		translate(60,0);
-		drawCard(this.cards_R[1]);
-	pop();
+	// Lines	
+	for(var i = 0; i <= BOARD_SIZE; i++) {
+		line(i*w,0,i*w,BOARD_SIZE*w);
+		line(0,i*w,BOARD_SIZE*w,i*w);
+	}
 	
-	pop();
+	// Pieces
+	for(var i = 0; i < BOARD_SIZE; i++)
+	for(var j = 0; j < BOARD_SIZE; j++) {
+		switch(this.get(j,i)) {
+			case B_P: fill(0,0,255); ellipse((j+0.5)*w,(i+0.5)*w,w/2,w/2); break;
+			case B_K: fill(0,0,255); ellipse((j+0.5)*w,(i+0.5)*w,w/1.5,w/1.5); break;
+			case R_P: fill(255,0,0); ellipse((j+0.5)*w,(i+0.5)*w,w/2,w/2); break;
+			case R_K: fill(255,0,0); ellipse((j+0.5)*w,(i+0.5)*w,w/1.5,w/1.5); break;
+		}
+	}
 }
