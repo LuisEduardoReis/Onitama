@@ -5,11 +5,14 @@ var hoverCell = null;
 var selectedCard = null;
 var selectedOriginCell = null;
 
+
 function setup() {
 	createCanvas(windowWidth,windowHeight);	
 	
 	board = new Board().init();
 	board.active = RED;
+	board.validmoves = board.getValidMoves();
+	
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -33,12 +36,10 @@ function mouseMoved() {
 		hoverCard = null;
 
 	// Cell Hover
-	if (between2d(mouseX,mouseY, 25,75,  25+50*5, 75+50*5)) {
+	if (between2d(mouseX,mouseY, 25,75,  25+50*5-1, 75+50*5-1)) {
 		hoverCell = pos(Math.floor((mouseX - 25)/50), Math.floor((mouseY - 75)/50));
 	} else 
 		hoverCell = null;
-	
-	
 }
 
 function mouseClicked() {
@@ -68,6 +69,9 @@ function draw() {
 	background(255);
 	translate(25,0);
 	
+	textAlign(CENTER,TOP); noStroke(); strokeWeight(0); fill(0);
+	if (hoverCell!=null)text(JSON.stringify(hoverCell),250,10);
+	
 	// Blue Side
 	push();
 		translate(70,0);
@@ -87,8 +91,21 @@ function draw() {
 	translate(0,75);
 	
 	push();
+		// Valid Moves
+		if (hoverCell) {
+			for(var i = 0; i < board.validmoves.length; i++) {
+				var move = board.validmoves[i];
+				if (selectedCard && move.card != selectedCard.card) continue;
+				if (!(move.from.x == hoverCell.x && move.from.y == hoverCell.y))continue;
+				
+				stroke(0,255,0); strokeWeight(3); fill(0);
+				line((move.from.x+0.5)*50,(move.from.y+0.5)*50,(move.to.x+0.5)*50,(move.to.y+0.5)*50);
+			}
+		}
+	
 		// Board
 		board.draw();
+		
 		
 		// Hover & Selected Cell
 		if (selectedOriginCell) {
@@ -108,7 +125,6 @@ function draw() {
 		
 		translate(0,50*1.5);
 		drawCard(board.board_card);
-		
 	pop();
 	
 	translate(0,50*5+10);

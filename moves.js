@@ -8,7 +8,6 @@ var Move = function(card,from,to) {
 
 
 Board.prototype.makeMove = function(move) {
-	console.log(move);
 	var c = this.active;
 	var mp = move.from ? this.get(move.from.x,move.from.y) : null;
 	
@@ -34,4 +33,37 @@ Board.prototype.makeMove = function(move) {
 	this.halfmove++;
 	
 	return this;
+}
+
+Board.prototype.getValidMoves = function() {
+	
+	var r = [];
+	var c = this.active;
+	var forward = c ? -1 : 1,
+		first_rank = c ? 4 : 0,
+		last_rank = c ? 0 : 4,
+		card_list = c ? this.cards_R : this.cards_B;
+		
+	for(var y = 0; y < BOARD_SIZE; y++){
+	for(var x = 0; x < BOARD_SIZE; x++){
+		var p = this.get(x,y);
+		if (p == E) continue;
+		var pc = COLOR[p];
+		if (pc != c) continue;
+		
+		
+		for(var card_i = 0; card_i < 2; card_i++) {
+			var card = card_list[card_i];
+			for(var move_i = 0; move_i < card.length; move_i++) {
+				var move = card[move_i];
+				var tpos = pos(x - forward*move.x, y + forward*move.y)
+				var tp = this.get(tpos.x,tpos.y);
+				
+				if (tp != null && tp != c)
+					r.push(new Move(card_i,pos(x,y),tpos));
+			}
+		}	
+	}}
+	
+	return r;
 }

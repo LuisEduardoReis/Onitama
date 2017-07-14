@@ -37,11 +37,17 @@ Board.prototype.init = function() {
 	this.fullmove = 1;
 	
 	this.cards = getRandom(CARDS,5);
-	this.cards_R.push(this.cards[0]);
+	/*this.cards_R.push(this.cards[0]);
 	this.cards_R.push(this.cards[1]);
 	this.cards_B.push(this.cards[2]);
 	this.cards_B.push(this.cards[3]);
-	this.board_card = this.cards[4];
+	this.board_card = this.cards[4];*/
+	
+	this.cards_R.push(CARDS[0]);
+	this.cards_R.push(CARDS[1]);
+	this.cards_B.push(CARDS[2]);
+	this.cards_B.push(CARDS[3]);
+	this.board_card = CARDS[4];
 	
 	return this;
 }
