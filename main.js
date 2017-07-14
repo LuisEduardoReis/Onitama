@@ -4,13 +4,12 @@ var hoverCard = null;
 var hoverCell = null;
 var selectedCard = null;
 var selectedOriginCell = null;
-var selectedTargetCell = null;
 
 function setup() {
 	createCanvas(windowWidth,windowHeight);	
 	
 	board = new Board().init();
-	board.active = false;
+	board.active = RED;
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -35,7 +34,7 @@ function mouseMoved() {
 
 	// Cell Hover
 	if (between2d(mouseX,mouseY, 25,75,  25+50*5, 75+50*5)) {
-		hoverCell = {x: Math.floor((mouseX - 25)/50), y: Math.floor((mouseY - 75)/50)}
+		hoverCell = pos(Math.floor((mouseX - 25)/50), Math.floor((mouseY - 75)/50));
 	} else 
 		hoverCell = null;
 	
@@ -47,17 +46,20 @@ function mouseClicked() {
 	if (hoverCard && board.active == hoverCard.player) {
 		selectedCard = hoverCard;
 		selectedOriginCell = null;
-		selectedTargetCell = null;
 	// Select Origin Cell
 	} else if (hoverCell && selectedCard 
 		&& selectedCard.player == board.active 
 		&& COLOR[board.get(hoverCell.x,hoverCell.y)] == board.active) {
 		selectedOriginCell = hoverCell;	
-		selectedTargetCell = null;
+	} else if (hoverCell && selectedCard && selectedOriginCell
+		&& COLOR[board.get(hoverCell.x,hoverCell.y)] != board.active) {
+		var move = new Move(selectedCard.card, selectedOriginCell, hoverCell);
+		board.makeMove(move);	
+		selectedCard = null;
+		selectedOriginCell = null;
 	} else {
 		selectedCard = null;
 		selectedOriginCell = null;
-		selectedTargetCell = null;
 	}
 	
 }
