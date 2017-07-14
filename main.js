@@ -1,4 +1,6 @@
 
+var boardStack = [];
+var moveStack = [];
 var board;
 var hoverCard = null;
 var hoverCell = null;
@@ -11,7 +13,8 @@ function setup() {
 	
 	board = new Board().init();
 	board.active = RED;
-	board.validmoves = board.getValidMoves();
+	board.generateValidMoves();
+	boardStack.push(board);
 	
 }
 function windowResized() {
@@ -54,15 +57,46 @@ function mouseClicked() {
 		selectedOriginCell = hoverCell;	
 	} else if (hoverCell && selectedCard && selectedOriginCell
 		&& COLOR[board.get(hoverCell.x,hoverCell.y)] != board.active) {
+		
 		var move = new Move(selectedCard.card, selectedOriginCell, hoverCell);
-		board.makeMove(move);	
+		
+		makeMove(move);		
+		
 		selectedCard = null;
 		selectedOriginCell = null;
 	} else {
 		selectedCard = null;
 		selectedOriginCell = null;
 	}
+}
+
+function makeMove(move) {
+	moveStack.push(
+		(board.active ? "RED" : "BLUE") + " - " +
+		CARD_NAMES[JSON.stringify(board.getActiveCard(move.card))] + " - " +
+		"("+move.from.x+", "+move.from.y+") -> " +
+		"("+move.to.x+", "+move.to.y+")"
+	);
 	
+	var new_board = new Board().copy(board).makeMove(move);
+	new_board.generateValidMoves();
+	boardStack.push(new_board);
+	
+	
+	board = new_board;	
+}
+
+function keyPressed() {
+	//console.log(keyCode);
+	if (keyCode == 77) { //M 		
+		var res = IDNegamax(board);
+		makeMove(res.max_move)
+	}
+	if ((keyCode == LEFT_ARROW || keyCode == BACKSPACE) && boardStack.length > 1) {
+		boardStack.pop();
+		moveStack.pop();
+		board = boardStack[boardStack.length-1];
+	}
 }
 
 function draw() {
@@ -70,7 +104,14 @@ function draw() {
 	translate(25,0);
 	
 	textAlign(CENTER,TOP); noStroke(); strokeWeight(0); fill(0);
-	if (hoverCell!=null)text(JSON.stringify(hoverCell),250,10);
+	text(boardStack.length,300,10);
+	text(board.validmoves.length + " - " + board.op_validmoves.length,300,30);
+	text(JSON.stringify(selectedCard),300,50);
+	
+	textAlign(LEFT,TOP); noStroke(); strokeWeight(0); fill(0);
+	for(var i = 0; i < moveStack.length; i++) {
+		text(moveStack[i],350,10+20*i);
+	}
 	
 	// Blue Side
 	push();
@@ -92,17 +133,23 @@ function draw() {
 	
 	push();
 		// Valid Moves
-		if (hoverCell) {
-			for(var i = 0; i < board.validmoves.length; i++) {
-				var move = board.validmoves[i];
-				if (selectedCard && move.card != selectedCard.card) continue;
-				if (!(move.from.x == hoverCell.x && move.from.y == hoverCell.y))continue;
-				
-				stroke(0,255,0); strokeWeight(3); fill(0);
-				line((move.from.x+0.5)*50,(move.from.y+0.5)*50,(move.to.x+0.5)*50,(move.to.y+0.5)*50);
-			}
+		for(var i = 0; i < board.validmoves.length; i++) {
+			var move = board.validmoves[i];
+			if (hoverCell && !(move.from.x == hoverCell.x && move.from.y == hoverCell.y)) continue;
+			if (selectedCard && selectedCard.card != move.card) continue;
+			
+			stroke(0,255,0); strokeWeight(3); fill(0);
+			line((move.from.x+0.5)*50,(move.from.y+0.5)*50,(move.to.x+0.5)*50,(move.to.y+0.5)*50);
 		}
-	
+		for(var i = 0; i < board.op_validmoves.length; i++) {
+			var move = board.op_validmoves[i];
+			if (hoverCell && !(move.from.x == hoverCell.x && move.from.y == hoverCell.y)) continue;
+			if (selectedCard) continue;
+			
+			stroke(255,0,0); strokeWeight(3); fill(0);
+			line((move.from.x+0.5)*50,(move.from.y+0.5)*50,(move.to.x+0.5)*50,(move.to.y+0.5)*50);
+		}
+			
 		// Board
 		board.draw();
 		

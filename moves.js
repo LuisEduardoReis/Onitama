@@ -31,14 +31,16 @@ Board.prototype.makeMove = function(move) {
 	this.active = !this.active;
 	if (!this.active) this.fullmove++;
 	this.halfmove++;
+	this.validmoves = null;
+	this.op_validmoves = null;	
 	
 	return this;
 }
 
-Board.prototype.getValidMoves = function() {
+Board.prototype.getValidMoves = function(player) {
 	
 	var r = [];
-	var c = this.active;
+	var c = player;
 	var forward = c ? -1 : 1,
 		first_rank = c ? 4 : 0,
 		last_rank = c ? 0 : 4,
@@ -48,9 +50,7 @@ Board.prototype.getValidMoves = function() {
 	for(var x = 0; x < BOARD_SIZE; x++){
 		var p = this.get(x,y);
 		if (p == E) continue;
-		var pc = COLOR[p];
-		if (pc != c) continue;
-		
+		if (COLOR[p] != c) continue;		
 		
 		for(var card_i = 0; card_i < 2; card_i++) {
 			var card = card_list[card_i];
@@ -58,12 +58,20 @@ Board.prototype.getValidMoves = function() {
 				var move = card[move_i];
 				var tpos = pos(x - forward*move.x, y + forward*move.y)
 				var tp = this.get(tpos.x,tpos.y);
+				if (tp == null) continue;
+				if (COLOR[tp] == c) continue;
 				
-				if (tp != null && tp != c)
-					r.push(new Move(card_i,pos(x,y),tpos));
+				r.push(new Move(card_i,pos(x,y),tpos));
 			}
 		}	
 	}}
 	
 	return r;
+}
+
+Board.prototype.generateValidMoves = function() {
+	if (this.validmoves == null) 
+		this.validmoves = this.getValidMoves(this.active);
+	if (this.op_validmoves == null) 
+		this.op_validmoves = this.getValidMoves(!this.active);
 }

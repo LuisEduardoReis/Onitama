@@ -18,6 +18,15 @@ COLOR[B_K] = BLUE;
 COLOR[R_P] = RED;
 COLOR[R_K] = RED;
 
+var PIECE_NAMES = {};
+PIECE_NAMES[E] = "E";
+
+PIECE_NAMES[B_P] = "B_P";
+PIECE_NAMES[B_K] = "B_K";
+
+PIECE_NAMES[R_P] = "R_P";
+PIECE_NAMES[R_K] = "R_K";
+
 function pos(x,y) { return {x: x, y: y};}
 
 function between(x,a,b) {return x >= a && x <= b;}
