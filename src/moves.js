@@ -10,6 +10,7 @@ var Move = function(card,from,to) {
 Board.prototype.makeMove = function(move) {
 	var c = this.active;
 	var mp = move.from ? this.get(move.from.x,move.from.y) : null;
+	var tp = move.to ? this.get(move.to.x,move.to.y) : null;
 	
 	if (mp == null) return;
 	// Move piece
@@ -31,13 +32,19 @@ Board.prototype.makeMove = function(move) {
 	this.active = !this.active;
 	if (!this.active) this.fullmove++;
 	this.halfmove++;
+	if (tp != E) this.halfmove = 0;
+	
 	this.validmoves = null;
-	this.op_validmoves = null;	
+	this.op_validmoves = null;
+
+	// Evaluate
+	this.value = this.evaluate();
 	
 	return this;
 }
 
 Board.prototype.getValidMoves = function(player) {
+	if (this.ended()) return [];
 	
 	var r = [];
 	var c = player;

@@ -1,8 +1,10 @@
 var INF = 100000;
-var search_time = 60*1000;
+var search_time = 1000;
 var search_start = 0;
 var search_accum = 0;
+var search_count = 0;
 var timedout = false;
+var cut = false;
 
 function checkTime() {
 	if(search_accum++ > 10000) {
@@ -29,10 +31,16 @@ function negaMaxRoot(board, depth) {
 }	
 function negaMax(board, depth, alpha, beta) {
 	if (checkTime()) return null;
-	if (depth == 0) return board.evaluate();
+	if (board.ended()) return board.value;
+	if (depth == 0) {		
+		cut = true;
+		return board.value;		
+	}
+	
 	var max = -INF;
 	var moves = board.getValidMoves(board.active);
 	for(var i = 0; i < moves.length; i++) {
+		search_count++;
 		var nm = negaMax(new Board().copy(board).makeMove(moves[i]), depth-1, -beta, -alpha);
 		if (nm == null) return null;
 		var score = -nm;
@@ -46,22 +54,34 @@ function negaMax(board, depth, alpha, beta) {
 	return alpha;
 }	
 
-function IDNegamax(board) {
-	search_time = 100;
+function IDNegamax(board, time) {
+	search_time = time || 100;
 	search_start = new Date().getTime();
 	search_accum = 0;
+	search_count = 0;
 	timedout = false;
 	
-	var most_recent = null;
+	var result = null;
+	var reached_depth = 0;
 	for(var depth = 2;; depth+=2) {		
-		console.log("Depth "+depth);
+		//console.log("Depth "+depth);
+		cut = false;
 		var res = negaMaxRoot(board, depth);
-		if (res != null) 
-			most_recent = res;
-		else 
+		if (res != null) {
+			result = res;
+			reached_depth = depth;
+		} else 
 			break;
-		console.log("Res: "+ res.max, res.max_move, (new Date().getTime() - search_start)/1000);
+		if (!cut) break;
+		if (result.max > 10) break;
+		//console.log("Res: "+ res.max, res.max_move, (new Date().getTime() - search_start)/1000);
 	}
-	console.log("Res: "+ most_recent.max, most_recent.max_move, (new Date().getTime() - search_start)/1000);
-	return most_recent;
+	
+	if (result != null && result.max_move != null) result.max_move.debug = 
+		"( D: " + reached_depth + 
+		" | S: " + numberWithCommas(search_count) +
+		" | O: " + result.max + 
+		" | T: " + ((new Date().getTime() - search_start)/1000) + " seconds)";
+	
+	return result;
 }

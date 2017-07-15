@@ -12,8 +12,10 @@ var Board = function () {
 	this.validmoves = null;
 	this.op_validmoves = null;
 
-	//this.halfmove = 0;
-	//this.fullmove = 1;
+	this.halfmove = 0;
+	this.fullmove = 0;
+	
+	this.value = 0;
 }
 
 Board.prototype.init = function() {
@@ -34,7 +36,9 @@ Board.prototype.init = function() {
 	
 	this.active = true;
 	this.halfmove = 0;
-	this.fullmove = 1;
+	this.fullmove = 0;
+	
+	this.value = this.evaluate();
 	
 	this.cards = getRandom(CARDS,5);
 	this.cards_R.push(this.cards[0]);
@@ -60,6 +64,7 @@ Board.prototype.copy = function(board) {
 	this.active = board.active;
 	this.halfmove = board.halfmove;
 	this.fullmove = board.fullmove;
+	this.value = board.value;
 	
 	this.cards_R[0] = board.cards_R[0];
 	this.cards_R[1] = board.cards_R[1];
@@ -89,9 +94,17 @@ Board.prototype.evaluate = function() {
 	if (this.get(2,0) == R_K) material += 200;
 	if (this.get(2,4) == B_K) material -= 200;
 	
+	if (this.halfmove >= 50) {
+		if (material == 0) return 0;
+		else return (material > 0 ? 1 : -1)*(this.active ? 1 : -1);
+	}
+	
 	return this.active ? material : -material;	
 }
 
+Board.prototype.ended = function() {
+	return (this.halfmove >= 50 || Math.abs(this.value) > 10);
+}
 
 Board.prototype.draw = function() {
 		

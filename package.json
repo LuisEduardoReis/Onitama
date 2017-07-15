@@ -1,0 +1,9 @@
+{
+  "name": "onitama",
+  "version": "0.0.4",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-uglify": "^1.0.1"
+  }
+}

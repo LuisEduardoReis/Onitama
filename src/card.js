@@ -36,6 +36,8 @@ CARD_NAMES[JSON.stringify(Boar)] = "Boar";
 CARD_NAMES[JSON.stringify(Eel)] = "Eel";
 CARD_NAMES[JSON.stringify(Cobra)] = "Cobra";
 
+function cardName(card) { return CARD_NAMES[JSON.stringify(card)]; }
+
 var drawCard = function(card) {
 	push();
 	var w = 10;

@@ -45,3 +45,31 @@ function getRandom(arr, n) {
     }
     return result;
 }
+
+function arrow(x1,y1,x2,y2) {
+	var d = dist(x1,y1,x2,y2);
+	var v = pos((x2-x1)/d,(y2-y1)/d);
+	var t = pos(-v.y,v.x);
+	line(x1,y1,x2,y2);
+	line(x2-5*t.x-10*v.x,y2-5*t.y-10*v.y,x2,y2);
+	line(x2+5*t.x-10*v.x,y2+5*t.y-10*v.y,x2,y2);
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function logSlider(position, va,vb) {
+  // position will be between 0 and 100
+  var minp = 0;
+  var maxp = 100;
+
+  // The result should be between 10 an 10000
+  var minv = Math.log(va || 10);
+  var maxv = Math.log(vb || 10000);
+
+  // calculate adjustment factor
+  var scale = (maxv-minv) / (maxp-minp);
+
+  return Math.round(Math.exp(minv + scale*(position-minp)) / 10) * 10;
+}
