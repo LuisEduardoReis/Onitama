@@ -28,7 +28,7 @@ function setup() {
 	showHintsCheckbox = createCheckbox('show (H)ints', true).parent("container");
 	showHintsCheckbox.position(25, 550);
 	
-	createDiv("Use Arroy Keys to browse history").position(25,575).parent("container");
+	createDiv("Use Arrow Keys to browse history").position(25,575).parent("container");
 	var buttons = createDiv("").position(25,600).parent("container");
 	buttons.child(createButton('AI (M)ove').mousePressed(aiMove).parent("container"));
 	buttons.child(createButton('(R)estart with random cards').mousePressed(restart).parent("container"));
